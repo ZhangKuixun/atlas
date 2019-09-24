@@ -71,7 +71,7 @@ atlas {
         //atlas框架在启动前要启动的功能，比如崩溃信息的统计。所有在atlas启动前启动的功能，是不能被动态部署的。
         preLaunch = 'com.taobao.demo.DemoPreLaunch'
         classInject false
-        aaptConstantId true
+        aaptConstantId true //aapt输出的R为常量, 建议值设置为false， 可以减少动态部署的patch包大小
         //自启动的bundle，跟随应用启动，而进行安装和加载。而普通的bundle是在运行的时候才进行安装和加载。
         dataBindingBundles = ['com.taobao.databindbundle']
         allBundlesToMdex true
