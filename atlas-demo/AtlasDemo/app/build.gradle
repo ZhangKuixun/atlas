@@ -1,17 +1,17 @@
 group = 'com.taobao.android.atlasdemo'
-version = getEnvValue("versionName", "1.0.0");
-def apVersion = getEnvValue("apVersion", "");
+version = getEnvValue("versionName", "1.0.0")
+def apVersion = getEnvValue("apVersion", "")
 
 apply plugin: 'com.android.application'
-apply plugin: 'com.taobao.atlas'
+apply plugin: 'com.taobao.atlas' //应用 com.taobao.atlas 插件
 //apply plugin: 'com.taobao.atlas.dexpatch'
 
 //通过增加判断逻辑，打出不同类型的定制包
 def appId = "com.taobao.demo"
 def minVersion = 14
 if (project.hasProperty("beta")) {
-	appId = "com.taobao.atlas.beta"
-	minVersion = 21
+    appId = "com.taobao.atlas.beta"
+    minVersion = 21
 }
 
 repositories {
@@ -32,13 +32,13 @@ android {
         //通过增加判断逻辑，打出不同类型的定制包
         if (project.hasProperty("beta")) {
             buildConfigField "boolean", "API_ENV", "false"
-        }else{
-        	buildConfigField "boolean", "API_ENV", "false"
+        } else {
+            buildConfigField "boolean", "API_ENV", "false"
         }
         multiDexEnabled = false
 
     }
-        
+
     dataBinding {
         enabled = true
     }
@@ -56,7 +56,7 @@ android {
         }
         debug {
             ndk {
-                abiFilters "x86","armeabi"
+                abiFilters "x86", "armeabi"
             }
 
         }
@@ -66,21 +66,22 @@ android {
 
 atlas {
     instantAppEnabled true
-    atlasEnabled true
+    atlasEnabled true //这是atlas的开关，接入后都要打开
     tBuildConfig {
+        //atlas框架在启动前要启动的功能，比如崩溃信息的统计。所有在atlas启动前启动的功能，是不能被动态部署的。
         preLaunch = 'com.taobao.demo.DemoPreLaunch'
         classInject false
         aaptConstantId true
+        //自启动的bundle，跟随应用启动，而进行安装和加载。而普通的bundle是在运行的时候才进行安装和加载。
         dataBindingBundles = ['com.taobao.databindbundle']
-       allBundlesToMdex true
-
+        allBundlesToMdex true
+        outOfApkBundles = ['remotebundle']//打包时不打到包中的bundle。
     }
 
-   
 
     patchConfigs {
         debug {
-            createTPatch false
+            createTPatch true //开启创建patch包，如果要构建patch包就把他开启
         }
     }
 
@@ -88,9 +89,10 @@ atlas {
     buildTypes {
         debug {
             if (apVersion) {
+                //基线版本的坐标
                 baseApDependency "com.taobao.android.atlasdemo:AP-debug:${apVersion}@ap"
                 patchConfig patchConfigs.debug
-            }
+            } //基线版本：
         }
     }
 }
@@ -104,7 +106,9 @@ dependencies {
     compile project(':splashscreen')
     compile project(':databindinglibrary')
 //    compile project(':activitygroupcompat')
-    bundleCompile project(':firstbundle')
+    bundleCompile project(':firstbundle') //bundleCompile这样引用的依赖，会把它当作一个bundle，打包的时候会打入到apk的lib下。
+//    compile 'com.taobao.android.atlasdemo:firstbundle:1.0.0@awb'
+
     bundleCompile project(':secondbundle')
     bundleCompile project(':remotebundle')
     bundleCompile project(':publicbundle')
@@ -155,6 +159,7 @@ tasks.whenTaskAdded { task ->
     }
 }
 
+//下面都是发布到maven的代码
 apply plugin: 'maven'
 apply plugin: 'maven-publish'
 

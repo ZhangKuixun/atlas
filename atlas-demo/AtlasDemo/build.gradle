@@ -2,9 +2,9 @@
 
 buildscript {
     repositories {
+        google()
         mavenLocal()
         jcenter()
-        google()
 
     }
     configurations.all {
@@ -22,8 +22,8 @@ ext {
 
 subprojects {
     repositories {
-        jcenter()
         google()
+        jcenter()
 
     }
 

@@ -1,12 +1,13 @@
 apply plugin: 'com.android.library'
-apply plugin: 'com.taobao.atlas'
+apply plugin: 'com.taobao.atlas' //应用 com.taobao.atlas 插件
 
 atlas {
     bundleConfig {
-        awbBundle true
+        awbBundle true //重要。awbBundle为true，表面这个一个bundle工程。会生成awb文件，也就是最后打入包中的so文件。
     }
     buildTypes {
         debug {
+            //基线版本的位置。
             baseApFile project.rootProject.file('app/build/outputs/apk/app-debug.ap')
         }
     }
@@ -40,10 +41,9 @@ android {
 }
 
 
-
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    providedCompile project(':middlewarelibrary')
+    providedCompile project(':middlewarelibrary') //相当于普通应用中，provided写法，依赖编译，但不会打入包中。providedCompile也支持了aar格式。
 
     providedCompile project(':publicbundle')
 
@@ -55,3 +55,26 @@ dependencies {
 
     compile project(':atlas_core')
 }
+
+
+////下面都是发布到maven的代码，如果需要，可以把firstbundle设置成maven的坐标。
+//group = 'com.taobao.android.atlasdemo'
+//version = "1.0.0"
+//
+//apply plugin: 'maven'
+//apply plugin: 'maven-publish'
+//
+//publishing {
+//    repositories {
+//        mavenLocal()
+//    }
+//}
+//
+//publishing {
+//    publications {
+//        maven(MavenPublication) {
+//            artifact "${project.buildDir}/outputs/awb/${project.name}-release.awb" //产物的路径
+//            artifactId "firstbundle" //产物的坐标Id
+//        }
+//    }
+//}
